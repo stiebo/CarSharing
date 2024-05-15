@@ -1,4 +1,4 @@
-# Car Sharing - Command-Line interface with JDBC Connection and H2 Database
+# Car Sharing - Command-Line interface with JDBC and H2
 
 ## About
 Car-sharing is becoming a more and more popular green alternative to owning a car. Let's create a program that manages a car-sharing service allowing companies to rent out their cars and find customers.

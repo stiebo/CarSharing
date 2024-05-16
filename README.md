@@ -42,6 +42,31 @@ If -databaseFileName argument is not given, then the database file name can be "
 0. Back
 ```
 
+#### Company list
+```text
+Choose a company:
+1. First company name
+2. Second company name
+3. Third company name
+0. Back
+```
+
+#### 'Company' submenu
+```text
+'Company name' company:
+1. Car list
+2. Create a car
+0. Back
+```
+
+#### Car list
+```text
+'Company name' cars:
+1. First car name
+2. Second car name
+3. Third car name
+```
+
 ### Customer menu
 ```text
 Choose a customer:
@@ -50,7 +75,7 @@ Choose a customer:
 0. Back
 ```
 
-### Rent a car menu
+#### Rent a car menu
 ```text
 1. Rent a car
 2. Return a rented car

@@ -26,7 +26,7 @@ public class CustomerPanel extends JPanel {
     private final JButton rentBtn        = buildAccentButton("Rent a Car",   MainWindow.ACCENT);
     private final JButton returnBtn      = buildAccentButton("Return Car",   new Color(0xD13438));
     private final JPanel  detailCard     = new JPanel();
-    private final JLabel  placeholderLbl;
+    private final JLabel  placeholderLbl = buildPlaceholder();
 
     public CustomerPanel(CustomerService customerService) {
         this.customerService = customerService;
@@ -42,8 +42,6 @@ public class CustomerPanel extends JPanel {
         split.setBorder(null);
         split.setDividerSize(1);
         add(split, BorderLayout.CENTER);
-
-        placeholderLbl = buildPlaceholder();
 
         customerList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) updateDetail(customerList.getSelectedValue());
@@ -160,7 +158,8 @@ public class CustomerPanel extends JPanel {
 
         detailCard.setVisible(false);
 
-        wrapper.add(detailCard, BorderLayout.NORTH);
+        wrapper.add(detailCard,      BorderLayout.NORTH);
+        wrapper.add(placeholderLbl, BorderLayout.CENTER);
         return wrapper;
     }
 
@@ -191,11 +190,13 @@ public class CustomerPanel extends JPanel {
             }
         }
         detailCard.setVisible(false);
+        placeholderLbl.setVisible(true);
     }
 
     private void updateDetail(Customer c) {
         if (c == null) {
             detailCard.setVisible(false);
+            placeholderLbl.setVisible(true);
             return;
         }
         // always reload fresh from DB
@@ -215,6 +216,7 @@ public class CustomerPanel extends JPanel {
             rentBtn.setEnabled(true);
             returnBtn.setEnabled(false);
         }
+        placeholderLbl.setVisible(false);
         detailCard.setVisible(true);
         detailCard.revalidate();
     }

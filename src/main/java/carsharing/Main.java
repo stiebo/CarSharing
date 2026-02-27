@@ -3,7 +3,7 @@ package carsharing;
 import carsharing.business.CustomerService;
 import carsharing.business.ManagerService;
 import carsharing.database.DbClient;
-import carsharing.userinterface.MainMenu;
+import carsharing.gui.MainWindow;
 import carsharing.repository.Repository;
 
 public class Main {
@@ -19,6 +19,9 @@ public class Main {
         String filename = parseArgs(args);
         DbClient dbClient = new DbClient(filename);
         Repository repository = new Repository(dbClient);
-        new MainMenu(new ManagerService(repository), new CustomerService(repository)).run();
+        ManagerService managerService = new ManagerService(repository);
+        CustomerService customerService = new CustomerService(repository);
+        MainWindow.launch(managerService, customerService);
     }
 }
+

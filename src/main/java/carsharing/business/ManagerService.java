@@ -63,4 +63,22 @@ public class ManagerService {
         repository.addCompanyCar(carName, company.getId());
         System.out.println("The car was added!");
     }
+
+    // ------- GUI-friendly methods (no console output) -------
+
+    public List<Company> getCompanies() {
+        return repository.listCompanies();
+    }
+
+    public void addCompany(String name) {
+        repository.addCompany(name);
+    }
+
+    public List<Car> getCarsForCompany(Company company) {
+        return repository.listCarsByCompanyId(company.getId());
+    }
+
+    public void addCar(String name, Company company) {
+        repository.addCompanyCar(name, company.getId());
+    }
 }

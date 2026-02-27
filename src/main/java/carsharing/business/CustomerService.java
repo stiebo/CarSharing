@@ -119,4 +119,45 @@ public class CustomerService {
         System.out.println("Company:");
         System.out.println(company.getName());
     }
+
+    // ------- GUI-friendly methods (no console output) -------
+
+    public List<Customer> getCustomers() {
+        return repository.listCustomers();
+    }
+
+    public void addCustomer(String name) {
+        repository.addCustomer(name);
+    }
+
+    public List<Company> getCompanies() {
+        return repository.listCompanies();
+    }
+
+    public List<Car> getAvailableCarsForCompany(Company company) {
+        return repository.listAvailableCarsByCompanyId(company.getId());
+    }
+
+    public Car getRentedCar(Customer customer) {
+        if (customer.getRentedCarId() == null) return null;
+        return repository.findCarById(customer.getRentedCarId());
+    }
+
+    public Company getCompanyForCar(Car car) {
+        return repository.findCompanyById(car.getCompanyId());
+    }
+
+    public void rentCarForCustomer(Customer customer, Car car) {
+        customer.setRentedCarId(car.getId());
+        repository.updateCustomer(customer);
+    }
+
+    public void returnCarForCustomer(Customer customer) {
+        customer.setRentedCarId(null);
+        repository.updateCustomer(customer);
+    }
+
+    public Customer refreshCustomer(Customer customer) {
+        return repository.findCustomerById(customer.getId());
+    }
 }

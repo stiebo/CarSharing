@@ -1,9 +1,19 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group = 'carsharing'
 version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass = 'carsharing.Main'
+}
 
 repositories {
     mavenCentral()
@@ -11,6 +21,8 @@ repositories {
 
 dependencies {
     implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+    implementation 'com.formdev:flatlaf:3.4.1'
+    implementation 'com.formdev:flatlaf-extras:3.4.1'
     testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'

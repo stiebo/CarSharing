@@ -27,8 +27,9 @@ public class CustomerService {
         Menu chooseCustomerMenu = new Menu("Customer list:");
         for (int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
+            int customerId = customer.getId();
             chooseCustomerMenu.addMenuEntry(new MenuEntry(i + 1, customer.getName(), () -> {
-                this.showCustomer(customer);
+                this.showCustomer(customerId);
                 chooseCustomerMenu.exit();
             }));
         }
@@ -42,18 +43,19 @@ public class CustomerService {
         System.out.println("The customer was added!");
     }
 
-    public void showCustomer(Customer customer) {
+    public void showCustomer(int customerId) {
+        Customer customer = repository.findCustomerById(customerId);
         new CustomerMenu(this, customer).run();
     }
 
-    public void rentCar (Customer customer) {
+    public void rentCar(Customer customer) {
+        if (customer.getRentedCarId() != null) {
+            System.out.println("You've already rented a car!");
+            return;
+        }
         List<Company> companies = repository.listCompanies();
         if (companies.isEmpty()) {
             System.out.println("The company list is empty!");
-            return;
-        }
-        if (customer.getRented_car_id() != null) {
-            System.out.println("You've already rented a car!");
             return;
         }
         Menu chooseCompanyMenu = new Menu("Choose a company:");
@@ -66,7 +68,6 @@ public class CustomerService {
         }
         chooseCompanyMenu.addMenuBack();
         chooseCompanyMenu.run();
-
     }
 
     public void chooseCar(Customer customer, Company company) {
@@ -78,7 +79,7 @@ public class CustomerService {
         Menu chooseCarMenu = new Menu("Choose a car:");
         for (int i = 0; i < availableCars.size(); i++) {
             Car car = availableCars.get(i);
-            chooseCarMenu.addMenuEntry(new MenuEntry(i+1, car.getName(), () -> {
+            chooseCarMenu.addMenuEntry(new MenuEntry(i + 1, car.getName(), () -> {
                 this.rentThisCar(customer, car);
                 chooseCarMenu.exit();
             }));
@@ -87,28 +88,28 @@ public class CustomerService {
         chooseCarMenu.run();
     }
 
-    public void rentThisCar (Customer customer, Car car) {
-        customer.setRented_car_id(car.getId());
+    public void rentThisCar(Customer customer, Car car) {
+        customer.setRentedCarId(car.getId());
         repository.updateCustomer(customer);
         System.out.printf("You rented '%s'%n", car.getName());
     }
 
-    public void returnCar (Customer customer) {
-        if (customer.getRented_car_id() == null) {
+    public void returnCar(Customer customer) {
+        if (customer.getRentedCarId() == null) {
             System.out.println("You didn't rent a car!");
             return;
         }
-        customer.setRented_car_id(null);
+        customer.setRentedCarId(null);
         repository.updateCustomer(customer);
         System.out.println("You've returned a rented car!");
     }
 
-    public void showRentedCar (Customer customer) {
-        if (customer.getRented_car_id() == null) {
+    public void showRentedCar(Customer customer) {
+        if (customer.getRentedCarId() == null) {
             System.out.println("You didn't rent a car!");
             return;
         }
-        Car car = repository.findCarById(customer.getRented_car_id());
+        Car car = repository.findCarById(customer.getRentedCarId());
         if (car == null) {
             throw new RuntimeException("Car no longer exists in database!");
         }

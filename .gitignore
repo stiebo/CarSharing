@@ -6,3 +6,4 @@ out/
 gradlew
 gradlew.bat
 anything.mv.db
+bin/

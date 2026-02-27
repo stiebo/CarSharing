@@ -8,7 +8,7 @@ import carsharing.repository.Repository;
 import java.util.List;
 
 public class ManagerService {
-    private Repository repository;
+    private final Repository repository;
 
     public ManagerService(Repository repository) {
         this.repository = repository;
@@ -54,7 +54,7 @@ public class ManagerService {
         }
         System.out.println("Car list:");
         for (int i = 0; i < cars.size(); i++) {
-            System.out.printf("%d. %s%n", i+1, cars.get(i).getName());
+            System.out.printf("%d. %s%n", i + 1, cars.get(i).getName());
         }
     }
 
@@ -63,5 +63,4 @@ public class ManagerService {
         repository.addCompanyCar(carName, company.getId());
         System.out.println("The car was added!");
     }
-
 }

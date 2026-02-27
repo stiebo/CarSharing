@@ -37,11 +37,11 @@ public class Repository {
     }
 
     public List<Car> listCarsByCompanyId(int id) {
-        return carDao.findByCompany_Id(id);
+        return carDao.findByCompanyId(id);
     }
 
     public List<Car> listAvailableCarsByCompanyId(int id) {
-        return carDao.findAvailableByCompany_Id(id);
+        return carDao.findAvailableByCompanyId(id);
     }
 
     public Car findCarById(int id) {
@@ -56,6 +56,10 @@ public class Repository {
         return customerDao.findAll();
     }
 
+    public Customer findCustomerById(int id) {
+        return customerDao.findById(id);
+    }
+
     public void addCustomer(String customerName) {
         customerDao.add(customerName);
     }
@@ -63,6 +67,4 @@ public class Repository {
     public void updateCustomer(Customer customer) {
         customerDao.update(customer);
     }
-
-
 }

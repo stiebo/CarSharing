@@ -9,7 +9,7 @@ import java.util.List;
 public class CompanyDaoImpl implements CompanyDao {
 
     private final DbClient dbClient;
-    private static final String CREATE_DB = "CREATE TABLE IF NOT EXISTS COMPANY " +
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS COMPANY " +
             "(id INTEGER AUTO_INCREMENT PRIMARY KEY, " +
             "name VARCHAR(255) UNIQUE NOT NULL)";
     private static final String SELECT_ALL_ORDER_BY_ID = "SELECT * FROM COMPANY ORDER BY id";
@@ -18,7 +18,7 @@ public class CompanyDaoImpl implements CompanyDao {
 
     public CompanyDaoImpl(DbClient dbClient) {
         this.dbClient = dbClient;
-        dbClient.run(CREATE_DB);
+        dbClient.run(CREATE_TABLE);
     }
 
     @Override

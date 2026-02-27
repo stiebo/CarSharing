@@ -12,14 +12,23 @@ import java.util.List;
 import java.util.function.Function;
 
 public class DbClient {
-    private final String JDBC_DRIVER = "org.h2.Driver";
+    private static final String JDBC_DRIVER = "org.h2.Driver";
     private final String DB_URL;
 
     public DbClient(String filename) {
         if (filename == null || filename.isEmpty()) {
             filename = "anything";
         }
-        DB_URL = "jdbc:h2:" + System.getProperty("user.dir") + File.separator + filename;
+        if (filename.startsWith("mem:")) {
+            DB_URL = "jdbc:h2:" + filename;
+        } else {
+            DB_URL = "jdbc:h2:" + System.getProperty("user.dir") + File.separator + filename;
+        }
+        try {
+            Class.forName(JDBC_DRIVER);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("H2 JDBC driver not found", e);
+        }
     }
 
     private void setParameters(PreparedStatement stmt, Object... params) throws SQLException {
@@ -29,38 +38,22 @@ public class DbClient {
     }
 
     private <T> T selectSingle(String sql, Function<ResultSet, T> mapper, Object... params) throws ExecuteSQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet resultSet = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);
-            stmt = conn.prepareStatement(sql);
             setParameters(stmt, params);
-            resultSet = stmt.executeQuery();
-
-            if (resultSet.next()) {
-                T result = mapper.apply(resultSet);
-
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    throw new IllegalStateException("Query returned more than one object");
+                    T result = mapper.apply(resultSet);
+                    if (resultSet.next()) {
+                        throw new IllegalStateException("Query returned more than one object");
+                    }
+                    return result;
                 }
-
-                return result;
-            } else {
-                return null; // Or throw an exception if necessary
+                return null;
             }
-        } catch (SQLException | ClassNotFoundException se) {
+        } catch (SQLException se) {
             throw new ExecuteSQLException(se);
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                throw new ExecuteSQLException(se);
-            }
         }
     }
 
@@ -89,38 +82,32 @@ public class DbClient {
         }, params);
     }
 
+    public Customer selectCustomer(String sql, Object... params) throws ExecuteSQLException {
+        return selectSingle(sql, resultSet -> {
+            try {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                Integer rentedCarId = resultSet.getObject("rented_car_id", Integer.class);
+                return new Customer(id, name, rentedCarId);
+            } catch (SQLException e) {
+                throw new RuntimeException("Error mapping Customer object", e);
+            }
+        }, params);
+    }
+
     private <T> List<T> selectList(String sql, Function<ResultSet, T> mapper, Object... params) throws ExecuteSQLException {
         List<T> result = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet resultSet = null;
-        try {
-            Class.forName(JDBC_DRIVER);
-            conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);
-            stmt = conn.prepareStatement(sql);
             setParameters(stmt, params);
-            resultSet = stmt.executeQuery();
-
-            while (resultSet.next()) {
-                result.add(mapper.apply(resultSet));
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(mapper.apply(resultSet));
+                }
             }
-            stmt.close();
-            conn.close();
         } catch (SQLException se) {
             throw new ExecuteSQLException(se);
-        } catch (Exception e) {
-            throw new ExecuteSQLException(e);
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException se2) {
-            }
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                throw new ExecuteSQLException(se);
-            }
         }
         return result;
     }
@@ -130,10 +117,9 @@ public class DbClient {
             try {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
-                int company_id = resultSet.getInt("company_id");
-                return new Car(id, name, company_id);
-            }
-            catch (SQLException e) {
+                int companyId = resultSet.getInt("company_id");
+                return new Car(id, name, companyId);
+            } catch (SQLException e) {
                 throw new ExecuteSQLException(e);
             }
         }, params);
@@ -144,10 +130,9 @@ public class DbClient {
             try {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
-                Integer rented_car_id = resultSet.getObject("rented_car_id", Integer.class);
-                return new Customer(id, name, rented_car_id);
-            }
-            catch (SQLException e) {
+                Integer rentedCarId = resultSet.getObject("rented_car_id", Integer.class);
+                return new Customer(id, name, rentedCarId);
+            } catch (SQLException e) {
                 throw new ExecuteSQLException(e);
             }
         }, params);
@@ -159,50 +144,20 @@ public class DbClient {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 return new Company(id, name);
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 throw new ExecuteSQLException(e);
             }
         }, params);
     }
 
-
     public void run(String sql, Object... params) throws ExecuteSQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            // STEP 1: Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-            //STEP 2: Open a connection
-            conn = DriverManager.getConnection(DB_URL);
-            // For Hyperskill testing requirements
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             conn.setAutoCommit(true);
-            //STEP 3: Execute a query
-            stmt = conn.prepareStatement(sql);
             setParameters(stmt, params);
             stmt.executeUpdate();
-            // STEP 4: Clean-up environment
-            stmt.close();
-            conn.close();
         } catch (SQLException se) {
-            //Handle errors for JDBC
             throw new ExecuteSQLException(se);
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            throw new ExecuteSQLException(e);
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException se2) {
-            } // nothing we can do
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                throw new ExecuteSQLException(se);
-            } //end finally try
-        } //end try
+        }
     }
-
-
 }

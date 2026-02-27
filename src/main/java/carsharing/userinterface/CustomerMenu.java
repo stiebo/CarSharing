@@ -5,7 +5,6 @@ import carsharing.domain.Customer;
 
 public class CustomerMenu extends Menu {
     public CustomerMenu(CustomerService customerService, Customer customer) {
-        //super("'%s' company:".formatted(customer.getName()));
         super("");
         menuEntries.add(new MenuEntry(1, "Rent a car", () -> {
             customerService.rentCar(customer);

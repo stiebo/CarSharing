@@ -1,3 +1,19 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.java.home": "C:\\Users\\stief\\.jdks\\openjdk-23.0.1",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-23",
+            "path": "C:\\Users\\stief\\.jdks\\openjdk-23.0.1",
+            "default": true
+        }
+    ],
+    "java.test.config": {
+        "javaExec": "C:\\Users\\stief\\.jdks\\openjdk-23.0.1\\bin\\java.exe",
+        "vmArgs": [
+            "-Dnet.bytebuddy.experimental=true",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.base/java.util=ALL-UNNAMED"
+        ]
+    }
 }

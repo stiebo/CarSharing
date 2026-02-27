@@ -88,4 +88,23 @@ class CustomerServiceTest {
         when(repository.findCustomerById(1)).thenReturn(fresh);
         assertEquals(fresh, customerService.refreshCustomer(stale));
     }
+
+    @Test
+    void getCompanies_delegatesToRepository() {
+        List<Company> companies = List.of(new Company(1, "Hertz"), new Company(2, "Avis"));
+        when(repository.listCompanies()).thenReturn(companies);
+        List<Company> result = customerService.getCompanies();
+        assertEquals(2, result.size());
+        assertEquals("Hertz", result.get(0).getName());
+    }
+
+    @Test
+    void getAvailableCarsForCompany_delegatesToRepository() {
+        Company company = new Company(1, "Hertz");
+        List<Car> cars = List.of(new Car(1, "Tesla", 1), new Car(2, "BMW", 1));
+        when(repository.listAvailableCarsByCompanyId(1)).thenReturn(cars);
+        List<Car> result = customerService.getAvailableCarsForCompany(company);
+        assertEquals(2, result.size());
+        assertEquals("Tesla", result.get(0).getName());
+    }
 }

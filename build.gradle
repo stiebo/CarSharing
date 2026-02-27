@@ -33,7 +33,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    jvmArgs('-Dnet.bytebuddy.experimental=true')
+    jvmArgs('-Dnet.bytebuddy.experimental=true', '-Djava.awt.headless=true')
     testLogging {
         events "passed", "skipped", "failed"
     }

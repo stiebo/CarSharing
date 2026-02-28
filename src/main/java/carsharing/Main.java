@@ -1,10 +1,10 @@
 package carsharing;
 
-import carsharing.business.CustomerService;
-import carsharing.business.ManagerService;
 import carsharing.database.DbClient;
-import carsharing.userinterface.MainMenu;
+import carsharing.gui.MainWindow;
 import carsharing.repository.Repository;
+
+import javax.swing.*;
 
 public class Main {
 
@@ -19,6 +19,10 @@ public class Main {
         String filename = parseArgs(args);
         DbClient dbClient = new DbClient(filename);
         Repository repository = new Repository(dbClient);
-        new MainMenu(new ManagerService(repository), new CustomerService(repository)).run();
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {
+        }
+        SwingUtilities.invokeLater(() -> new MainWindow(repository).showWindow());
     }
 }

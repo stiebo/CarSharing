@@ -1,4 +1,4 @@
-# Car Sharing - Command-Line interface with JDBC and H2
+# Car Sharing - Desktop application with JDBC and H2
 
 ## About
 Car-sharing is becoming a more and more popular green alternative to owning a car. Let's create a program that manages a car-sharing service allowing companies to rent out their cars and find customers.
@@ -10,13 +10,13 @@ Check out my profile: https://hyperskill.org/profile/500961738
 All documentation retrieved from https://hyperskill.org/projects/140, provided by JetBrains Academy.
 
 ## Documentation
-The program allows to log in as a manger or as a customer (or create new customers).
+The application starts as a desktop window (Swing with native system look-and-feel on Windows).
 
-A manager can list or create new companies, and also list or create new cars for a selected company.
+From the main screen you can log in as manager, log in as customer, or create a new customer.
 
-If the log in as a customer option was chosen, the program will print the list of existing customers and prompt the user to choose one.
+A manager can list companies, create a company, open a company, view its cars, and add a new car.
 
-A customer can either rent a car from the list of *available* cars from given companies, return a rented car or show a previously rented car (if any).
+A customer can rent an available car, return a rented car, and view details about the currently rented car.
 
 
 ## Usage
@@ -27,58 +27,5 @@ The database file name is obtained from the command-line arguments:
 ```
 If -databaseFileName argument is not given, then the database file name can be "anything".
 
-## Main menu
-```text
-1. Log in as a manager
-2. Log in as a customer
-3. Create a customer
-0. Exit
-```
-
-###  Manager menu
-```text
-1. Company list
-2. Create a company
-0. Back
-```
-
-#### Company list
-```text
-Choose a company:
-1. First company name
-2. Second company name
-3. Third company name
-0. Back
-```
-
-#### 'Company' submenu
-```text
-'Company name' company:
-1. Car list
-2. Create a car
-0. Back
-```
-
-#### Car list
-```text
-'Company name' cars:
-1. First car name
-2. Second car name
-3. Third car name
-```
-
-### Customer menu
-```text
-Choose a customer:
-1. First customer
-2. Second customer
-0. Back
-```
-
-#### Rent a car menu
-```text
-1. Rent a car
-2. Return a rented car
-3. My rented car
-0. Back
-```
+## Interface
+The app uses window screens and dialog boxes instead of terminal menus.
